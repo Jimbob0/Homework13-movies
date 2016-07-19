@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script src="https://code.jquery.com/jquery-3.1.0.js" integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk=" crossorigin="anonymous"></script>
+</head>
+<body>
+	<script type="text/javascript">
+		$.get("http://159.203.175.239:8080/movies.txt", function(moviesData){
+			$.get("http://159.203.175.239:8080/checkouts.txt", function(checkoutsData){
+				function biggest(thing){
+					var userCount = [];
+					var data = checkoutsData.split("\n");
+					for (var i = 0; i < data.length; i++){
+						data[i] = data[i].split(" ");
+						user = data[i][thing];
+						count = 1;
+						userCount.push({user:user, count:count});
+					}
+					for (var x = 0; x < userCount.length - 1; x++){
+						for (var y = x + 1; y < userCount.length; y++){
+							if (userCount[x].user === userCount[y].user){
+								userCount[x].count += 1;
+								userCount.splice(y,1);
+							}
+						}
+					}
+					userCount.sort(function(a,b){
+						return b.count - a.count;
+					});
+					var output = "";
+					for (x = 0; x < userCount.length; x++){
+						if (userCount[x].count === userCount[0].count){
+							output += userCount[x].user+" ";
+						}
+					}
+					return output;
+				}
+				function biggestMovie(){
+					var movieNumber = biggest(2);
+					var movieNumberArr = movieNumber.split(" "); 
+					var output = [];
+					var data = moviesData.split("\n");
+					for (var i = 0; i < data.length-1; i++){
+						data[i] = data[i].split(" ");
+						for (var y = 0; y < movieNumberArr.length-1; y++){
+							if (movieNumberArr[y] == data[i][0]){
+								for (var x = 1; x < data[i].length;x++){
+									output.push(data[i][x]);
+								}
+							}
+						}
+					}
+					return output.join(" ");
+				}
+				console.log(biggest(0));
+				console.log(biggest(1));
+				console.log(biggestMovie());
+			});
+		});
+	</script>
+</body>
+</html>
